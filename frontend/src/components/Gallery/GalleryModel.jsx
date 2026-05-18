@@ -1,85 +1,82 @@
-import React, { useMemo } from 'react'
+import { useEffect } from 'react'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 
-export const GalleryModel = () => {
-  // Load the glb safely from the public folder
-  const { scene } = useGLTF('/models/gallery.glb')
+const MODEL_PATH = '/models/looniversal-crypto-arvr-art-gallery/source/2/scene.gltf'
 
-  const processedScene = useMemo(() => {
-    const clonedScene = scene.clone()
-    
-    clonedScene.traverse((child) => {
-      if (child.isMesh) {
-        // Enable high-fidelity real-time shadow configurations
-        child.castShadow = true
-        child.receiveShadow = true
+export default function GalleryModel() {
+  const { scene } = useGLTF(MODEL_PATH)
 
-        // 1. Automatically hide any placeholder canvas elements or frames in the GLB
-        // because our interactive React-based components render in their place
-        if (
-          child.name.startsWith('Artwork_') || 
-          child.name.includes('Frame') ||
-          child.name.includes('Placeholder')
-        ) {
-          child.visible = false
-          return
+  useEffect(() => {
+    if (!scene) return
+
+    console.log('GLTF LOADED')
+
+    // =========================
+    // AUTO CENTER MODEL
+    // =========================
+    const box = new THREE.Box3().setFromObject(scene)
+
+    const size = box.getSize(new THREE.Vector3())
+    const center = box.getCenter(new THREE.Vector3())
+
+    console.log('SIZE:', size)
+    console.log('CENTER:', center)
+
+    scene.position.set(-center.x, -center.y, -center.z)
+
+    // Put floor on ground
+    scene.position.y += size.y / 2
+    scene.position.y -= 2
+
+    // =========================
+    // AUTO SCALE
+    // =========================
+    const maxAxis = Math.max(size.x, size.y, size.z)
+
+    let scale = 1
+
+    if (maxAxis > 100) scale = 0.01
+    else if (maxAxis > 50) scale = 0.03
+    else if (maxAxis > 20) scale = 0.08
+    else if (maxAxis > 10) scale = 0.2
+    else if (maxAxis < 1) scale = 5
+
+    scene.scale.setScalar(scale)
+
+    // =========================
+    // FIX MATERIALS/TEXTURES
+    // =========================
+    scene.traverse((child) => {
+      if (!child.isMesh) return
+
+      child.castShadow = true
+      child.receiveShadow = true
+
+      if (child.material) {
+        child.material.side = THREE.DoubleSide
+
+        // Base Color Texture
+        if (child.material.map) {
+          child.material.map.colorSpace =
+            THREE.SRGBColorSpace
+
+          child.material.map.flipY = false
+          child.material.map.needsUpdate = true
         }
 
-        // 2. Map premium modern gallery materials to architectural components
-        if (child.name.includes('Floor') || child.name === 'Gallery_Floor') {
-          // Keep floor invisible here so our high-performance MeshReflectorMaterial floor displays reflections below
-          child.visible = false 
+        // Emissive
+        if (child.material.emissiveMap) {
+          child.material.emissiveMap.colorSpace =
+            THREE.SRGBColorSpace
         }
 
-        if (child.name.includes('Wall')) {
-          child.material = new THREE.MeshStandardMaterial({
-            color: '#0e0e16',
-            roughness: 0.85,
-            metalness: 0.1,
-          })
-        }
-
-        if (child.name.includes('Pillar')) {
-          child.material = new THREE.MeshStandardMaterial({
-            color: '#1a1a26',
-            roughness: 0.15,
-            metalness: 0.85,
-          })
-        }
-
-        if (child.name.includes('LED') || child.name.includes('Strip')) {
-          child.material = new THREE.MeshStandardMaterial({
-            color: '#4a90d9',
-            emissive: '#4a90d9',
-            emissiveIntensity: 1.5,
-          })
-        }
-
-        if (child.name.includes('Light_Panel') || child.name.includes('Fixture')) {
-          child.material = new THREE.MeshStandardMaterial({
-            color: '#ffffff',
-            emissive: '#ffffff',
-            emissiveIntensity: 2.0,
-          })
-        }
-
-        if (child.name.includes('Bench')) {
-          child.material = new THREE.MeshStandardMaterial({
-            color: '#151522',
-            roughness: 0.4,
-            metalness: 0.3,
-          })
-        }
+        child.material.needsUpdate = true
       }
     })
-
-    return clonedScene
   }, [scene])
 
-  return <primitive object={processedScene} />
+  return <primitive object={scene} />
 }
 
-// Preload the model in the background
-useGLTF.preload('/models/gallery.glb')
-export default GalleryModel
+useGLTF.preload(MODEL_PATH)

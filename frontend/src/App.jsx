@@ -19,13 +19,13 @@ const GalleryCanvas = () => {
       camera={{
         fov: 75,
         near: 0.1,
-        far: 100,
+        far: 500,           // ✅ increased from 100
         position: [0, 2.2, 10],
       }}
       gl={{
         antialias: true,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.2,
+        toneMappingExposure: 1.8,   // ✅ increased from 1.2
         outputColorSpace: THREE.SRGBColorSpace,
         powerPreference: 'high-performance',
       }}
@@ -43,8 +43,7 @@ const GalleryCanvas = () => {
 function App() {
   const { setIsLoading, setLoadingProgress } = useGalleryStore()
   useAudioManager()
-  
-  // Hook directly into R3F file loaders (tracks the loading of GLB model + art textures)
+
   const { progress } = useProgress()
 
   useEffect(() => {

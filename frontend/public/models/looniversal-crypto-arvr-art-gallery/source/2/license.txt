@@ -1,0 +1,11 @@
+Model Information:
+* title:	Gallery
+* source:	https://sketchfab.com/3d-models/gallery-f3eb9b83f2e24ad4a3ca681eff982399
+* author:	stephen.curran1359 (https://sketchfab.com/stephen.curran1359)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Gallery" (https://sketchfab.com/3d-models/gallery-f3eb9b83f2e24ad4a3ca681eff982399) by stephen.curran1359 (https://sketchfab.com/stephen.curran1359) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
