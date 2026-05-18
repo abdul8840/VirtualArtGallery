@@ -4,15 +4,27 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
+
+  define: {
+    global: 'globalThis',
+  },
+
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
+
   optimizeDeps: {
-    include: ['three', '@react-three/fiber', '@react-three/drei'],
+    include: [
+      'three',
+      '@react-three/fiber',
+      '@react-three/drei',
+      'buffer',
+    ],
     exclude: ['@react-three/postprocessing'],
   },
+
   build: {
     rollupOptions: {
       output: {

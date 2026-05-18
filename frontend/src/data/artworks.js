@@ -1,3 +1,5 @@
+import ArtworkImg from '../assets/home-about.png'
+
 export const ARTWORKS = [
   {
     id: 'artwork_001',
@@ -9,7 +11,7 @@ export const ARTWORKS = [
     medium: 'Oil on Canvas',
     description:
       'A mesmerizing exploration of light and shadow, where abstract forms converge in a symphony of ethereal blues and golden hues. Vasquez masterfully captures the tension between order and chaos, inviting viewers into a meditative space where boundaries dissolve and consciousness expands beyond the physical realm.',
-    image: '/artworks/artwork1.jpg',
+    image: ArtworkImg,
     position: [-8, 2, -9.8],
     rotation: [0, 0, 0],
     scale: [3, 2, 0.1],
@@ -27,7 +29,7 @@ export const ARTWORKS = [
     medium: 'Digital Art on Aluminum',
     description:
       'Chen explores the intersection of technology and human emotion in this striking digital composition. Geometric precision meets organic flow as silicon pathways transform into neural networks, blurring the boundary between artificial intelligence and human consciousness in the digital age.',
-    image: '/artworks/artwork2.jpg',
+    image: ArtworkImg,
     position: [-3, 2, -9.8],
     rotation: [0, 0, 0],
     scale: [3.5, 2.2, 0.1],
@@ -45,7 +47,7 @@ export const ARTWORKS = [
     medium: 'Acrylic and Gold Leaf',
     description:
       'Osei channels ancient cosmic wisdom through contemporary artistic expression. The interplay of deep cosmic purples and shimmering gold leaf creates a sacred geometry that speaks to the universal human experience of solitude and connection within the infinite cosmos.',
-    image: '/artworks/artwork3.jpg',
+    image: ArtworkImg,
     position: [3, 2, -9.8],
     rotation: [0, 0, 0],
     scale: [2.8, 2.8, 0.1],
@@ -63,7 +65,7 @@ export const ARTWORKS = [
     medium: 'Photography',
     description:
       'Tanaka deconstructs the urban landscape into beautiful fragments of light and shadow. Through multiple long-exposure techniques, she captures the ephemeral nature of city life, transforming busy streets into abstract studies of movement, color, and the invisible rhythms that define metropolitan existence.',
-    image: '/artworks/artwork4.jpg',
+    image: ArtworkImg,
     position: [8, 2, -9.8],
     rotation: [0, 0, 0],
     scale: [3.8, 2.5, 0.1],
@@ -81,7 +83,7 @@ export const ARTWORKS = [
     medium: 'Watercolor and Ink',
     description:
       'Santos reimagines architectural space through an organic lens, where buildings breathe and structures grow like living organisms. His intricate ink work combined with fluid watercolor washes creates structures that seem to pulse with life, challenging our perception of built versus natural environments.',
-    image: '/artworks/artwork5.jpg',
+    image: ArtworkImg,
     position: [-9.8, 2, -5],
     rotation: [0, Math.PI / 2, 0],
     scale: [2.5, 3, 0.1],
@@ -99,7 +101,7 @@ export const ARTWORKS = [
     medium: 'Generative AI + Oil',
     description:
       'A groundbreaking fusion of artificial intelligence and traditional oil painting techniques. Kapoor trains neural networks on classical botanical illustrations, then physically paints the AI-generated compositions with traditional oils, creating works that exist in the liminal space between machine and human creativity.',
-    image: '/artworks/artwork6.jpg',
+    image: ArtworkImg,
     position: [-9.8, 2, 0],
     rotation: [0, Math.PI / 2, 0],
     scale: [3.5, 2.8, 0.1],
@@ -117,7 +119,7 @@ export const ARTWORKS = [
     medium: 'Mixed Media',
     description:
       'Morrison layers decades of personal memory and collective history into intricate assemblages that vibrate with temporal energy. Found objects, vintage photographs, and archival materials are transformed into portraits of time itself, each piece a meditation on impermanence and the echoes that define human experience.',
-    image: '/artworks/artwork7.jpg',
+    image: ArtworkImg,
     position: [-9.8, 2, 5],
     rotation: [0, Math.PI / 2, 0],
     scale: [2.8, 2.8, 0.1],
@@ -135,7 +137,7 @@ export const ARTWORKS = [
     medium: 'Neon and Canvas',
     description:
       'Drawing inspiration from quantum physics, Liu creates luminous paintings where light itself becomes the medium. Neon elements embedded within painted canvases create works that shift and transform with ambient light conditions, embodying the quantum principle that observation itself changes the nature of reality.',
-    image: '/artworks/artwork8.jpg',
+    image: ArtworkImg,
     position: [9.8, 2, -5],
     rotation: [0, -Math.PI / 2, 0],
     scale: [3, 2.5, 0.1],
@@ -153,7 +155,7 @@ export const ARTWORKS = [
     medium: 'Spray Paint on Wood',
     description:
       'Abdullah transforms urban street art traditions into gallery-worthy masterpieces. His hyper-detailed cityscapes capture the living pulse of metropolitan environments, each brushstroke infused with the energy of street culture, social commentary, and a deep love for the urban human tapestry.',
-    image: '/artworks/artwork9.jpg',
+    image: ArtworkImg,
     position: [9.8, 2, 0],
     rotation: [0, -Math.PI / 2, 0],
     scale: [3, 3, 0.1],
@@ -171,7 +173,7 @@ export const ARTWORKS = [
     medium: 'Mirror and LED Installation',
     description:
       'Nakamura creates portals to infinite space through her innovative mirror and LED compositions. Inspired by Kusama and Japanese ma philosophy, these works create the phenomenological experience of standing at the edge of infinity, challenging the boundaries between art object and lived experience.',
-    image: '/artworks/artwork10.jpg',
+    image: ArtworkImg,
     position: [9.8, 2, 5],
     rotation: [0, -Math.PI / 2, 0],
     scale: [2.5, 2, 0.1],
