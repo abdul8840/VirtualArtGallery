@@ -5,6 +5,39 @@ import * as THREE from 'three'
 import useGalleryStore from '@/stores/galleryStore'
 import { useArtworkInteraction } from '@/hooks/useArtworkInteraction'
 
+// Procedural beautiful fallback gradient texture if image is missing
+const createFallbackTexture = (color1 = '#1a1a2e', color2 = '#4a90d9') => {
+  const canvas = document.createElement('canvas')
+  canvas.width = 512
+  canvas.height = 512
+  const ctx = canvas.getContext('2d')
+  
+  // Base Gradient
+  const grad = ctx.createLinearGradient(0, 0, 512, 512)
+  grad.addColorStop(0, color1)
+  grad.addColorStop(1, color2)
+  ctx.fillStyle = grad
+  ctx.fillRect(0, 0, 512, 512)
+  
+  // Decorative abstract circles
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.08)'
+  for (let i = 0; i < 6; i++) {
+    ctx.beginPath()
+    ctx.arc(
+      Math.sin(i) * 150 + 256,
+      Math.cos(i) * 150 + 256,
+      Math.random() * 80 + 40,
+      0,
+      Math.PI * 2
+    )
+    ctx.fill()
+  }
+  
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.colorSpace = THREE.SRGBColorSpace
+  return texture
+}
+
 export const ArtworkFrame = ({ artwork }) => {
   const groupRef = useRef()
   const glowRef = useRef()
@@ -19,24 +52,30 @@ export const ArtworkFrame = ({ artwork }) => {
 
   const [w, h] = artwork.scale
 
-  const texture = useTexture(artwork.image)
+  // Attempt to load texture safely
+  let texture
+  try {
+    texture = useTexture(artwork.image)
+  } catch (e) {
+    texture = useMemo(() => createFallbackTexture('#111122', artwork.frameColor || '#4a90d9'), [artwork])
+  }
 
   useFrame(({ clock }) => {
     const target = hovered ? 1 : 0
-    setGlowIntensity((prev) => THREE.MathUtils.lerp(prev, target, 0.05))
+    setGlowIntensity((prev) => THREE.MathUtils.lerp(prev, target, 0.1))
 
     if (glowRef.current) {
       glowRef.current.material.opacity = glowIntensity * 0.4
-      const pulse = Math.sin(clock.elapsedTime * 2) * 0.1 + 0.9
+      const pulse = Math.sin(clock.elapsedTime * 3) * 0.05 + 0.95
       glowRef.current.scale.set(
-        1 + glowIntensity * 0.05 * pulse,
-        1 + glowIntensity * 0.05 * pulse,
+        1 + glowIntensity * 0.04 * pulse,
+        1 + glowIntensity * 0.04 * pulse,
         1
       )
     }
 
     if (frameRef.current) {
-      frameRef.current.material.emissiveIntensity = glowIntensity * 0.5
+      frameRef.current.material.emissiveIntensity = glowIntensity * 0.6
     }
   })
 
@@ -69,7 +108,7 @@ export const ArtworkFrame = ({ artwork }) => {
     >
       {/* Glow plane behind frame */}
       <mesh ref={glowRef} position={[0, 0, -0.05]}>
-        <planeGeometry args={[w + 0.8, h + 0.8]} />
+        <planeGeometry args={[w + 0.6, h + 0.6]} />
         <meshBasicMaterial
           color={artwork.frameColor || '#4a90d9'}
           transparent
@@ -84,17 +123,17 @@ export const ArtworkFrame = ({ artwork }) => {
         <boxGeometry args={[w + frameThickness * 2, h + frameThickness * 2, frameDepth]} />
         <meshStandardMaterial
           color={artwork.frameColor || '#C9A84C'}
-          roughness={0.1}
-          metalness={0.9}
+          roughness={0.15}
+          metalness={0.85}
           emissive={artwork.frameColor || '#C9A84C'}
           emissiveIntensity={0}
         />
       </mesh>
 
-      {/* Inner frame shadow */}
+      {/* Inner frame shadow insert */}
       <mesh position={[0, 0, 0.01]}>
-        <boxGeometry args={[w + 0.05, h + 0.05, frameDepth - 0.01]} />
-        <meshStandardMaterial color="#080808" roughness={1} metalness={0} />
+        <boxGeometry args={[w + 0.04, h + 0.04, frameDepth - 0.01]} />
+        <meshStandardMaterial color="#050508" roughness={1} metalness={0} />
       </mesh>
 
       {/* Artwork canvas */}
@@ -108,40 +147,12 @@ export const ArtworkFrame = ({ artwork }) => {
         <planeGeometry args={[w, h]} />
         <meshStandardMaterial
           map={texture}
-          roughness={0.4}
-          metalness={0.0}
-          toneMapped={false}
+          roughness={0.3}
+          metalness={0.1}
         />
       </mesh>
 
-      {/* Reflection/sheen overlay */}
-      <mesh position={[0, 0, frameDepth / 2 + 0.003]}>
-        <planeGeometry args={[w, h]} />
-        <meshStandardMaterial
-          transparent
-          opacity={0.04}
-          roughness={0}
-          metalness={1}
-          color="#ffffff"
-          depthWrite={false}
-        />
-      </mesh>
-
-      {/* Spotlight cone visual */}
-      {hovered && (
-        <mesh position={[0, h / 2 + 2, 0]} rotation={[Math.PI, 0, 0]}>
-          <coneGeometry args={[0.5, 4, 8, 1, true]} />
-          <meshBasicMaterial
-            color="#ffffff"
-            transparent
-            opacity={0.02}
-            side={THREE.BackSide}
-            depthWrite={false}
-          />
-        </mesh>
-      )}
-
-      {/* Artwork title label */}
+      {/* Standard text overlays (omitting external fonts to guarantee instantaneous loading) */}
       <Text
         position={[0, -h / 2 - 0.25, 0.1]}
         fontSize={0.14}
@@ -149,7 +160,6 @@ export const ArtworkFrame = ({ artwork }) => {
         anchorX="center"
         anchorY="top"
         maxWidth={w}
-        font="/fonts/inter-medium.ttf"
       >
         {artwork.title}
       </Text>
@@ -164,11 +174,10 @@ export const ArtworkFrame = ({ artwork }) => {
         {artwork.artist} · {artwork.year}
       </Text>
 
-      {/* Hover interaction hint */}
       {hovered && (
         <Text
           position={[0, h / 2 + 0.2, 0.1]}
-          fontSize={0.1}
+          fontSize={0.11}
           color="#4a90d9"
           anchorX="center"
           anchorY="bottom"

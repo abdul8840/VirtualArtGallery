@@ -1,11 +1,11 @@
-import { Suspense, useRef } from 'react'
+import { Suspense } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { PerformanceMonitor, AdaptiveDpr, BakeShadows } from '@react-three/drei'
+import { PerformanceMonitor, AdaptiveDpr } from '@react-three/drei'
 
 import GalleryEnvironment from './GalleryEnvironment'
 import GalleryFloor from './GalleryFloor'
-import GalleryWalls from './GalleryWalls'
 import GalleryLighting from './GalleryLighting'
+import GalleryModel from './GalleryModel'
 import ArtworkFrame from './ArtworkFrame'
 import ParticleSystem from '@/components/Effects/ParticleSystem'
 import PostProcessing from '@/components/Effects/PostProcessing'
@@ -30,17 +30,22 @@ export const GalleryScene = () => {
         <GalleryEnvironment />
         <GalleryLighting />
 
+        {/* 1. Real-time reflective floor */}
+        <GalleryFloor />
+
+        {/* 2. Load your custom Blender GLB architecture safely */}
         <Suspense fallback={null}>
-          <GalleryFloor />
-          <GalleryWalls />
-
-          {ARTWORKS.map((artwork) => (
-            <ArtworkFrame key={artwork.id} artwork={artwork} />
-          ))}
-
-          <ParticleSystem />
+          <GalleryModel />
         </Suspense>
 
+        {/* 3. Load interactive artwork canvases */}
+        {ARTWORKS.map((artwork) => (
+          <Suspense key={artwork.id} fallback={null}>
+            <ArtworkFrame artwork={artwork} />
+          </Suspense>
+        ))}
+
+        <ParticleSystem />
         <PostProcessing isModalOpen={isModalOpen} />
         <ControlsUpdater />
       </PerformanceMonitor>

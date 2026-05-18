@@ -1,5 +1,6 @@
-import { Suspense, useEffect, useCallback } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
+import { useProgress } from '@react-three/drei'
 import * as THREE from 'three'
 
 import GalleryScene from '@/components/Gallery/GalleryScene'
@@ -12,8 +13,6 @@ import useGalleryStore from '@/stores/galleryStore'
 import { useAudioManager } from '@/hooks/useAudioManager'
 
 const GalleryCanvas = () => {
-  const { galleryEntered } = useGalleryStore()
-
   return (
     <Canvas
       shadows
@@ -44,23 +43,17 @@ const GalleryCanvas = () => {
 function App() {
   const { setIsLoading, setLoadingProgress } = useGalleryStore()
   useAudioManager()
+  
+  // Hook directly into R3F file loaders (tracks the loading of GLB model + art textures)
+  const { progress } = useProgress()
 
   useEffect(() => {
-    let progress = 0
-    const interval = setInterval(() => {
-      progress += Math.random() * 15
-      if (progress >= 100) {
-        progress = 100
-        setLoadingProgress(100)
-        clearInterval(interval)
-        setTimeout(() => setIsLoading(false), 600)
-      } else {
-        setLoadingProgress(progress)
-      }
-    }, 200)
-
-    return () => clearInterval(interval)
-  }, [setIsLoading, setLoadingProgress])
+    setLoadingProgress(progress)
+    if (progress === 100) {
+      const delay = setTimeout(() => setIsLoading(false), 800)
+      return () => clearTimeout(delay)
+    }
+  }, [progress, setLoadingProgress, setIsLoading])
 
   return (
     <div className="app-root">
